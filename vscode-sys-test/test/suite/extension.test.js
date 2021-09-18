@@ -7,13 +7,16 @@ global.vscode = require('vscode');
 const rust = require('../../pkg/vscode_sys_test');
 
 suite('VS Code Sys Test Suite', () => {
-	vscode.window.showInformationMessage('Start all tests.');
-
 	test('show information message', () => {
-		rust.test_show_information_message();
-	});
+		var promise = rust.test_show_information_message_test();
+
+		return promise.then(
+			function(value) { assert.equal(value, "btn1") },
+			function(error) { console.log(error) }
+		);
+	}).timeout(5000);
 
 	test('register command', () => {
-		rust.register_command();
+		rust.register_command_test();
 	});
 });

@@ -2,3 +2,4 @@
 **/target
 **/node_modules
 **/.vscode-test
+**/Cargo.lock

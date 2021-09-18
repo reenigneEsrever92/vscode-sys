@@ -1,27 +1,30 @@
-use js_sys::Array;
 use wasm_bindgen::prelude::*;
-use vscode_sys::functions::*;
+use vscode_sys::{functions::*, types::{Command, VSCode}};
+use web_sys::console;
+use js_sys::Promise;
 
 #[wasm_bindgen]
-pub fn test_show_information_message() {
-
-    let closure = Closure::wrap(Box::new(|val: JsValue| {
-        showInformationMessage0("message from future");
-    }) as Box<dyn FnMut(JsValue)>);
-
-    showInformationMessage1("Hello from Wasm", &Array::of1(&JsValue::from_str("test")))
-        .then(&closure);
+extern "C" {
+    #[wasm_bindgen(js_namespace  = console)]
+    pub fn log(message: &str);
 }
 
 #[wasm_bindgen]
-pub fn register_command() {
+pub async fn test_show_information_message_test() -> Result<JsValue, JsValue> {
+    match VSCode::show_information_message_1("Hello from Wasm", "btn1").await {
+        Ok(value) => {
+            console::debug_1(&JsValue::from(format!("Button {:?} clicked!", value).as_str()));
+            Ok(value)
+        },
+        Err(error) => Err(error),
+    }
+}
+
+#[wasm_bindgen]
+pub fn register_command_test() {
     let closure = Closure::wrap(Box::new(|| {
-        showInformationMessage0("message from command");
+        show_information_message_0("message from command");
     }) as Box<dyn FnMut()>);
 
-    registerCommand("vs-code-test-sys.testcmd", &closure);
-
-    loop {
-        
-    }
+    register_command("vscode-sys-test.testcmd".into(), &closure);
 }
